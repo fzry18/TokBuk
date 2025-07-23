@@ -18,7 +18,7 @@ Jika ingin mencoba demonya secara online, dapat dilakukan di https://tokbuk3.her
 1. Clone repo ini dengan menggunakan perintah
 
     ```bash
-    git clone https://github.com/novilfahlevy/TokBuk.git
+    git clone https://github.com/fzry18/TokBuk.git
     ```
 
 2. Copy file *.env.example* dan paste menjadi *.env*
@@ -65,8 +65,6 @@ Jika ingin mencoba demonya secara online, dapat dilakukan di https://tokbuk3.her
 
     Ada beberapa akun lainnya yang dapat dilihat di menu pengguna, semua akun menggunakan password *123123* (kemungkinan ada password yang diganti).
 
-
-- Fariz Dwi Januardi
 
 ## Credits
 Aplikasi ini dibuat menggunakan framework [Laravel](https://laravel.com) versi 8.14, dan template admin bootstrap [Stisla](https://getstisla.com).
