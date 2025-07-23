@@ -34,7 +34,10 @@ class BukuController extends Controller
   }
   public function index()
   {
-    $buku = $this->buku->orderBy(DB::raw('CAST(jumlah as int)'))->get();
+    // Optimize dengan eager loading untuk menghindari N+1 query
+    $buku = Buku::with(['kategori', 'penulis', 'penerbit', 'lokasi'])
+      ->orderBy(DB::raw('CAST(jumlah as INTEGER)'))
+      ->get();
     $penulis = $this->penulis->get();
     $penerbit = $this->penerbit->get();
     $kategori = $this->kategori->get();
@@ -142,8 +145,9 @@ class BukuController extends Controller
     ]);
 
     $buku = Buku::where('id', $id);
+    $bukuData = $buku->first(); // Store original data before update
     $sampulBaruRequest = $request->file('sampul');
-    $namaSampulLama = $buku->first()->sampul;
+    $namaSampulLama = $bukuData->sampul;
 
     $namaSampulBaru = $this->simpanSampul($sampulBaruRequest, $namaSampulLama);
 
@@ -151,19 +155,19 @@ class BukuController extends Controller
       'sampul' => $sampulBaruRequest ? $namaSampulBaru : $namaSampulLama,
       'isbn' => $request->isbn,
       'judul' => $request->judul,
-      'id_penulis' => $request->id_penulis ?? $buku->first()->id_penulis,
-      'id_penerbit' => $request->id_penerbit ?? $buku->first()->id_penerbit,
-      'id_kategori' => $request->id_kategori ?? $buku->first()->id_kategori,
-      'id_lokasi' => $request->id_lokasi ?? $buku->first()->id_lokasi,
-      'tahun_terbit' => $request->tahun_terbit ?? $buku->first()->tahun_terbit,
-      'harga' => $request->harga ?? $buku->first()->harga,
+      'id_penulis' => $request->id_penulis ?? $bukuData->id_penulis,
+      'id_penerbit' => $request->id_penerbit ?? $bukuData->id_penerbit,
+      'id_kategori' => $request->id_kategori ?? $bukuData->id_kategori,
+      'id_lokasi' => $request->id_lokasi ?? $bukuData->id_lokasi,
+      'tahun_terbit' => $request->tahun_terbit ?? $bukuData->tahun_terbit,
+      'harga' => $request->harga ?? $bukuData->harga,
       'diskon' => $request->diskon,
       'barcode' => $request->barcode
     ]);
 
     if ($update == true) {
       $this->rekamAktivitas('Mengedit buku ' . $request->judul);
-      return redirect()->route('buku.detail', ['id' => $buku->first()->id])->with(['message' => 'Berhasil Mengedit Buku', 'type' => 'success']);
+      return redirect()->route('buku.detail', ['id' => $id])->with(['message' => 'Berhasil Mengedit Buku', 'type' => 'success']);
     } else {
       return redirect()->route('buku')->with(['message' => 'Gagal Mengedit Buku', 'type' => 'danger']);
     }

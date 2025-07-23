@@ -33,9 +33,9 @@ class UserController extends Controller
   {
     $request->validate([
       'name' => 'required',
-      'username' => 'required|unique:users,username,{$id},id',
+      'username' => 'required|unique:users,username',
       'posisi' => 'required',
-      'email' => 'required|unique:users,email,{$id},id',
+      'email' => 'required|unique:users,email',
       'telepon' => 'required',
       'alamat' => 'required',
       'password' => 'required|confirmed|min:6'
@@ -70,9 +70,9 @@ class UserController extends Controller
 
     $request->validate([
       'name' => 'required',
-      'username' => 'unique:users,username,{$id},id',
+      'username' => "unique:users,username,{$id},id",
       'posisi' => 'required',
-      'email' => 'unique:users,email,{$id},id',
+      'email' => "unique:users,email,{$id},id",
       'alamat' => 'required',
       'telepon' => 'required'
     ]);

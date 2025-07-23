@@ -20,7 +20,7 @@
         "maatwebsite/excel": "^3.1",
         "milon/barcode": "^8.0"
     },
-      "require-dev": {
+    "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.8",
         "facade/ignition": "^2.3.6",
         "fakerphp/faker": "^1.9.1",
@@ -32,7 +32,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "extra": {
         "laravel": {
@@ -42,7 +45,7 @@
     "autoload": {
         "classmap": [
             "database"
-          ],
+        ],
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",

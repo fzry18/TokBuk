@@ -16,11 +16,13 @@ class ProfilController extends Controller
 
   public function update(Request $request)
   {
+    $userId = auth()->user()->id;
+
     $request->validate([
       'name' => 'required',
-      'username' => 'unique:users,username,{$id},id',
+      'username' => "unique:users,username,{$userId},id",
       'alamat' => 'required',
-      'email' => 'unique:users,email,{$id},id',
+      'email' => "unique:users,email,{$userId},id",
       'telepon' => 'required'
     ], [
       'name.required' => 'Masukan nama lengkap anda',

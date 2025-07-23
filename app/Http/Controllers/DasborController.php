@@ -41,7 +41,7 @@ class DasborController extends Controller
 
   private function getChartBestSeller(): array
   {
-    $transaksiBulanIni = Transaksi::whereMonth('transaksi.created_at', $this->now->month);
+    $transaksiBulanIni = Transaksi::whereRaw('EXTRACT(MONTH FROM transaksi.created_at) = ?', [$this->now->month]);
 
     $bestSeller = $transaksiBulanIni->join('detail_transaksi as dt', 'dt.id_transaksi', '=', 'transaksi.id')
       ->join('buku', 'buku.id', '=', 'dt.id_buku')
@@ -75,10 +75,10 @@ class DasborController extends Controller
   {
     return Buku::join('detail_pengadaan as dpb', 'dpb.id_buku', '=', 'buku.id')
       ->join('pengadaan as pb', 'dpb.id_pengadaan', '=', 'pb.id')
-      ->select(['buku.isbn', 'buku.judul', 'buku.jumlah', DB::raw('DATE_FORMAT(MAX(pb.tanggal), "%d-%m-%Y") as tanggal')])
+      ->select(['buku.isbn', 'buku.judul', 'buku.jumlah', DB::raw('TO_CHAR(MAX(pb.tanggal), \'DD-MM-YYYY\') as tanggal')])
       ->where('buku.jumlah', '<=', $this->batasanStok)
       ->groupBy(['buku.isbn', 'buku.judul', 'buku.jumlah'])
-      ->orderByDesc('pb.tanggal')
+      ->orderBy(DB::raw('MAX(pb.tanggal)'), 'desc')
       ->get();
   }
 
@@ -86,11 +86,11 @@ class DasborController extends Controller
   {
     $chartTransaksi = Transaksi::select([
       DB::raw('SUM(total_harga) AS total_perbulan'),
-      DB::raw('MONTH(created_at) AS bulan')
+      DB::raw('EXTRACT(MONTH FROM created_at) AS bulan')
     ])
-      ->whereYear('created_at', $this->now->year)
+      ->whereRaw('EXTRACT(YEAR FROM created_at) = ?', [$this->now->year])
       ->groupBy([
-        DB::raw('MONTH(created_at)'),
+        DB::raw('EXTRACT(MONTH FROM created_at)'),
         'bulan'
       ])
       ->orderBy('bulan')

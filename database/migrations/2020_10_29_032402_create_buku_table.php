@@ -18,7 +18,7 @@ class CreateBukuTable extends Migration
       $table->string('sampul')->nullable();
       $table->string('isbn');
       $table->string('judul');
-      $table->year('tahun_terbit')->nullable();
+      $table->integer('tahun_terbit')->nullable(); // Changed from year to integer
       $table->unsignedBigInteger('id_penulis')->nullable();
       $table->foreign('id_penulis')->references('id')->on('penulis');
       $table->unsignedBigInteger('id_penerbit')->nullable();
@@ -29,7 +29,7 @@ class CreateBukuTable extends Migration
       $table->foreign('id_lokasi')->references('id')->on('lokasi');
       $table->integer('harga')->nullable();
       $table->integer('diskon')->nullable();
-      $table->string('jumlah');
+      $table->integer('jumlah'); // Changed from string to integer
       $table->text('barcode')->nullable();
       $table->timestamps();
     });

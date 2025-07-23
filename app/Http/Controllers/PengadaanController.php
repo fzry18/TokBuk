@@ -9,6 +9,7 @@ use App\Distributor;
 use App\Pengadaan;
 use App\Pengaturan;
 use App\Traits\RiwayatAktivitas;
+use App\Helpers\PdfHelper;
 use Error;
 use Exception;
 use Illuminate\Http\Request;
@@ -122,7 +123,7 @@ class PengadaanController extends Controller
     try {
       $kode = $this->getKodePengadaan();
       $faktur = $request->file('faktur');
-      
+
       if ( $faktur ) {
         $namaFaktur = $kode . '.' . $faktur->getClientOriginalExtension();
         Storage::disk('public')->put('images/faktur/' . $namaFaktur, file_get_contents($faktur));
@@ -271,9 +272,36 @@ class PengadaanController extends Controller
 
   public function laporan($id)
   {
-    $pengadaan = Pengadaan::find($id);
-    $pengaturan = Pengaturan::first();
-    return PDF::loadView('pengadaan.faktur', compact('pengadaan', 'pengaturan'))->download('laporan_' . $pengadaan->kode . '.pdf');
+    // Set memory dan error handling untuk PDF generation
+    ini_set('memory_limit', '512M');
+    ini_set('max_execution_time', 300);
+    $old_error_reporting = error_reporting(0);
+    ini_set('display_errors', 0);
+
+    try {
+      $pengadaan = Pengadaan::find($id);
+      $pengaturan = Pengaturan::first();
+
+      ob_start();
+      $pdf = PDF::loadView('pengadaan.faktur', compact('pengadaan', 'pengaturan'))
+        ->setOptions([
+          'isHtml5ParserEnabled' => true,
+          'isRemoteEnabled' => false,
+          'defaultFont' => 'DejaVu Sans'
+        ]);
+      ob_end_clean();
+
+      // Restore error reporting
+      error_reporting($old_error_reporting);
+      ini_set('display_errors', 1);
+
+      return $pdf->download('laporan_' . $pengadaan->kode . '.pdf');
+    } catch (\Exception $e) {
+      // Restore error reporting in case of exception
+      error_reporting($old_error_reporting);
+      ini_set('display_errors', 1);
+      throw $e;
+    }
   }
 
   public function cetak($id)
@@ -296,7 +324,7 @@ class PengadaanController extends Controller
         if ( $faktur ) {
           $namaFaktur = $pengadaan->kode . '.' . $faktur->getClientOriginalExtension();
           Storage::disk('public')->put('images/faktur/' . $namaFaktur, file_get_contents($faktur));
-          
+
           if ( $pengadaan->update(['faktur' => $namaFaktur]) ) {
             foreach ( $pengadaan->detail as $detail ) {
               $buku = Buku::find($detail->id_buku);

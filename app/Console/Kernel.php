@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule
           ->call(function() {
-            RiwayatAktivitas::whereMonth('created_at', '<=', Carbon::now()->subMonths(3)->month)->delete();
+            RiwayatAktivitas::whereRaw('EXTRACT(MONTH FROM created_at) <= ?', [Carbon::now()->subMonths(3)->month])->delete();
           })
           ->dailyAt('00:00');
     }
