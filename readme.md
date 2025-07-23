@@ -65,13 +65,7 @@ Jika ingin mencoba demonya secara online, dapat dilakukan di https://tokbuk3.her
 
     Ada beberapa akun lainnya yang dapat dilihat di menu pengguna, semua akun menggunakan password *123123* (kemungkinan ada password yang diganti).
 
-## Kontributor (Kelompok 3)
-- [Muhammad Novil Fahlevy](https://github.com/novilfahlevy)
-- [Alisanabela Nasrun](https://github.com/alisanabela13)
-- Yudha Indra Permana
-- Roofi Ali Raditya
-- Farkhanudin
-- Niken Astrid Pradiva Putri
+
 - Fariz Dwi Januardi
 
 ## Credits
